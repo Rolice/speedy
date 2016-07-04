@@ -21,16 +21,16 @@
   },
   "autoload": {
     "psr-4": {
-      "Rolice\\Econt\\": "src",
-      "Rolice\\Econt\\Models\\": "src/Models/",
-      "Rolice\\Econt\\Commands\\": "src/Commands/",
-      "Rolice\\Econt\\Components\\": "src/Components/",
-      "Rolice\\Econt\\Exceptions\\": "src/Exceptions/"
+      "Rolice\\Speedy\\": "src",
+      "Rolice\\Speedy\\Models\\": "src/Models/",
+      "Rolice\\Speedy\\Commands\\": "src/Commands/",
+      "Rolice\\Speedy\\Components\\": "src/Components/",
+      "Rolice\\Speedy\\Exceptions\\": "src/Exceptions/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Rolice\\Econt\\Test\\": "tests/"
+      "Rolice\\Speedy\\Test\\": "tests/"
     }
   }
 }
