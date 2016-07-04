@@ -4,7 +4,7 @@ namespace Rolice\Speedy;
 use Illuminate\Support\ServiceProvider;
 
 /**
- * EcontServiceProvider for Laravel
+ * SpeedyServiceProvider for Laravel
  *
  * @package    Rolice\Speedy
  */
@@ -25,16 +25,16 @@ class SpeedyServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([__DIR__ . '/../config/econt.php' => config_path('econt.php')], 'config');
+        $this->publishes([__DIR__ . '/../config/speedy.php' => config_path('speedy.php')], 'config');
         $this->publishes([__DIR__ . '/../database/migrations/' => database_path('migrations')], 'migrations');
 
-        $this->mergeConfigFrom(__DIR__ . '/../config/econt.php', 'econt');
+        $this->mergeConfigFrom(__DIR__ . '/../config/speedy.php', 'speedy');
 
-        $this->loadTranslationsFrom($this->app->basePath(). '/vendor/rolice/econt/resources/lang', 'econt');
+        $this->loadTranslationsFrom($this->app->basePath(). '/vendor/rolice/speedy/resources/lang', 'speedy');
 
-        if (!$this->app->routesAreCached()) {
-            require __DIR__ . '/Http/routes.php';
-        }
+//        if (!$this->app->routesAreCached()) {
+//            require __DIR__ . '/Http/routes.php';
+//        }
     }
 
     /**
@@ -48,11 +48,11 @@ class SpeedyServiceProvider extends ServiceProvider
             return new Speedy;
         });
 
-        $this->app['sync'] = $this->app->share(function ($app) {
-            return new Sync;
-        });
+//        $this->app['sync'] = $this->app->share(function ($app) {
+//            return new Sync;
+//        });
 
-        $this->commands('sync');
+//        $this->commands('sync');
     }
 
     /**
