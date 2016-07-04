@@ -3,7 +3,7 @@
     "description": "Composer package for local courier service provider - Speedy.",
     "type": "library",
     "version": "1.0",
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "license": "MIT",
     "authors": [
         {
