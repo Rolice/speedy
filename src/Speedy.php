@@ -2,6 +2,8 @@
 namespace Rolice\Speedy;
 
 use Illuminate\Support\Facades\Config;
+use Rolice\Econt\Components\ComponentInterface;
+use Rolice\Speedy\Components\Calculation;
 use Rolice\Speedy\Components\Client;
 use Rolice\Speedy\Exceptions\InvalidUsernameOrPasswordException;
 use Rolice\Speedy\Exceptions\NoUserPermissionsException;
@@ -17,6 +19,12 @@ class Speedy
      * @var SoapClient
      */
     protected $client = null;
+
+    /**
+     * A user instance, representing logged in client account.
+     * @var Client
+     */
+    protected $user = null;
 
     /**
      * Speedy constructor. Initializes the SOAP client with the configuration WSDL URL.
@@ -48,6 +56,23 @@ class Speedy
         throw $fault;
     }
 
+    protected function call($name, $arguments)
+    {
+        $response = null;
+
+        if ($arguments instanceof ComponentInterface) {
+            $arguments = $arguments->toArray();
+        }
+
+        try {
+            $response = $this->client->$name($arguments);
+        } catch (SoapFault $e) {
+            $this->handle($e);
+        }
+
+        return $response;
+    }
+
     /**
      * Performs a login with Speedy webservice.
      * @param string $username The username of the client.
@@ -59,17 +84,10 @@ class Speedy
      */
     public function login($username, $password)
     {
-        $response = null;
+        $response = $this->call('login', ['username' => $username, 'password' => $password]);
+        $this->user = new Client($response);
 
-        try {
-            $response = $this->client->login(['username' => $username, 'password' => $password]);
-        } catch (SoapFault $e) {
-            $this->handle($e);
-        }
-
-        $result = new Client($response);
-
-        return $result;
+        return $this->user;
     }
 
     /**
@@ -81,18 +99,29 @@ class Speedy
      */
     public function active(Client $client, $refresh = true)
     {
-        $response = null;
-
-        try {
-            $response = $this->client->isSessionActive([
-                'sessionId' => $client->sessionId(),
-                'refreshSession' => !!$refresh
-            ]);
-        } catch (SoapFault $e) {
-            $this->handle($e);
-        }
+        $response = $this->call('isSessionActive', [
+            'sessionId' => $client->sessionId(),
+            'refreshSession' => !!$refresh
+        ]);
 
         return isset($response->result) ? !!$response->result : false;
+    }
+
+    public function calculate()
+    {
+        $data = new Calculation;
+        $data->serviceTypeId = 1;
+        $data->broughtToOffice = false;
+        $data->parcelsCount = 3;
+        $data->weightDeclared = 3.650;
+        $data->documents = false;
+        $data->fragile = false;
+        $data->palletized = false;
+
+        $response = $this->call('calculate', [
+            'sessionId' => $this->user->clientId(),
+            'calculation' => $data->toArray()
+        ]);
     }
 
 }
