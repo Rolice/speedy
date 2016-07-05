@@ -2,6 +2,7 @@
 namespace Rolice\Speedy\Components;
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Rolice\Econt\Components\Serializable;
 
 class Calculation implements ComponentInterface
@@ -209,7 +210,11 @@ class Calculation implements ComponentInterface
      */
     public $payerRefPackingsId;
 
-    public $parcels = [];
+    /**
+     * Information about parcles
+     * @var Collection<ParcelInfo>
+     */
+    public $parcels = null;
 
     /**
      * A special delivery ID
@@ -228,5 +233,10 @@ class Calculation implements ComponentInterface
      * @var bool
      */
     public $checkTBCOfficeWorkDay;
+
+    public function __construct()
+    {
+        $this->parcels = new Collection();
+    }
 
 }
