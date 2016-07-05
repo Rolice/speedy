@@ -47,6 +47,16 @@ class Speedy
         }
 
         foreach ($fault->detail as $exception => $message) {
+            if (is_object($message)) {
+                if (!isset($message->errorDescription)) {
+                    $message = '';
+                }
+
+                if (isset($message->errorDescription)) {
+                    $message = $message->errorDescription;
+                }
+            }
+
             if (class_exists("\\Rolice\\Speedy\\Exceptions\\{$exception}")) {
                 $class = "\\Rolice\\Speedy\\Exceptions\\{$exception}";
                 throw new $class($message);
@@ -117,9 +127,10 @@ class Speedy
         $data->documents = false;
         $data->fragile = false;
         $data->palletized = false;
+        $data->senderCountryId = 100;
 
         $response = $this->call('calculate', [
-            'sessionId' => $this->user->clientId(),
+            'sessionId' => $this->user->sessionId(),
             'calculation' => $data->toArray()
         ]);
     }
