@@ -1,15 +1,14 @@
 <?php
-namespace Rolice\Econt\Components;
+namespace Rolice\Speedy\Components;
 
 use ReflectionClass;
-use Rolice\Econt\Exceptions\EcontException;
+use Rolice\Speedy\Exceptions\SpeedyException;
 use SimpleXMLElement;
-use Rolice\Econt\Components\ComponentInterface;
 
 /**
  * Class Serializable
  * Trait providing, common, basic, uni-purpose serialization of ComponentInterface object to XML
- * @package Rolice\Econt\Components
+ * @package Rolice\Speedy\Components
  * @verion 1.0
  */
 trait Serializable
@@ -45,19 +44,19 @@ trait Serializable
     }
 
     /**
-     * Builds an Econt-compatible XML request
+     * Builds an Speedy-compatible XML request
      * @param SimpleXMLElement $xml Currently scoped XML representation object.
      * @param ComponentInterface|array $data A user-defined, custom request structure for the XML file.
-     * @throws EcontException
+     * @throws SpeedyException
      */
     protected function build(SimpleXMLElement $xml, $data)
     {
         if (!is_object($data) && !is_array($data)) {
-            throw new EcontException('Invalid entity for serialization. An implementation of ComponentInterface or array required.');
+            throw new SpeedyException('Invalid entity for serialization. An implementation of ComponentInterface or array required.');
         }
 
         if (is_object($data) && !($data instanceof ComponentInterface)) {
-            throw new EcontException('An object given is not an implementation of class ComponentInterface.');
+            throw new SpeedyException('An object given is not an implementation of class ComponentInterface.');
         }
 
         $reflected = !is_array($data);
@@ -92,11 +91,11 @@ trait Serializable
     protected function buildArray(array &$array, $data)
     {
         if (!is_object($data) && !is_array($data)) {
-            throw new EcontException('Invalid entity for serialization. An implementation of ComponentInterface or array required.');
+            throw new SpeedyException('Invalid entity for serialization. An implementation of ComponentInterface or array required.');
         }
 
         if (is_object($data) && !($data instanceof ComponentInterface)) {
-            throw new EcontException('An object given is not an implementation of class ComponentInterface.');
+            throw new SpeedyException('An object given is not an implementation of class ComponentInterface.');
         }
 
         $reflected = !is_array($data);

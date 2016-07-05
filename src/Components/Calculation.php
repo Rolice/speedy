@@ -3,7 +3,6 @@ namespace Rolice\Speedy\Components;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Rolice\Econt\Components\Serializable;
 
 class Calculation implements ComponentInterface
 {
