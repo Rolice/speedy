@@ -43,7 +43,7 @@ class Speedy
     protected function handle(SoapFault $fault)
     {
         if (!isset($fault->detail) || !$fault->detail) {
-            throw $fault;
+            throw new SpeedyException($fault->getMessage(), $fault->getCode());
         }
 
         foreach ($fault->detail as $exception => $message) {

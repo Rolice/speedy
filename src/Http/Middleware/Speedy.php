@@ -1,5 +1,5 @@
 <?php
-namespace Rolice\Econt\Http\Middleware;
+namespace Rolice\Speedy\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

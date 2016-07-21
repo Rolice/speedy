@@ -1,15 +1,16 @@
 <?php
 namespace Rolice\Speedy\Http\Controllers;
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Request;
+use Rolice\Speedy\Speedy;
 
 class SpeedyController extends Controller
 {
 
-    public function test()
+    public function test(Request $request)
     {
-        die('test');
+        $speedy = new Speedy();
+        $speedy->login($request->get('username'), $request->get('password'));
     }
 
 }
