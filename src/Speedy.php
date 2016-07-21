@@ -2,7 +2,7 @@
 namespace Rolice\Speedy;
 
 use Illuminate\Support\Facades\Config;
-use Rolice\Econt\Components\ComponentInterface;
+use Rolice\Speedy\Components\ComponentInterface;
 use Rolice\Speedy\Components\Calculation;
 use Rolice\Speedy\Components\Client;
 use Rolice\Speedy\Exceptions\InvalidUsernameOrPasswordException;

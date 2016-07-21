@@ -32,9 +32,9 @@ class SpeedyServiceProvider extends ServiceProvider
 
         $this->loadTranslationsFrom($this->app->basePath(). '/vendor/rolice/speedy/resources/lang', 'speedy');
 
-//        if (!$this->app->routesAreCached()) {
-//            require __DIR__ . '/Http/routes.php';
-//        }
+        if (!$this->app->routesAreCached()) {
+            require __DIR__ . '/Http/routes.php';
+        }
     }
 
     /**
