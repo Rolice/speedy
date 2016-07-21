@@ -1,5 +1,4 @@
 <?php
-use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'speedy','middleware' => 'Rolice\Speedy\Http\Middleware\Speedy', function () {
 
