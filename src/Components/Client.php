@@ -3,6 +3,8 @@ namespace Rolice\Speedy\Components;
 
 use Carbon\Carbon;
 use JsonSerializable;
+use Rolice\Speedy\Exceptions\InvalidSessionException;
+use Rolice\Speedy\Exceptions\SpeedyException;
 
 class Client implements JsonSerializable
 {
@@ -11,6 +13,19 @@ class Client implements JsonSerializable
      * @var int
      */
     protected $id;
+
+    /**
+     * The username used in the login process for this client.
+     * @var string
+     */
+    protected $username;
+
+    /**
+     * the password used in the login process for this client.
+     * @todo Improve security of these operations.
+     * @var string
+     */
+    protected $password;
 
     /**
      * The ID of the session that is registered with Speedy webservice.
@@ -25,22 +40,77 @@ class Client implements JsonSerializable
     protected $time;
 
     /**
-     * Client constructor. Initializes the object with the data passed with a login response.
-     * @param object $response Response object from successful login operation.
+     * Client constructor. Initializes the object with the data passed to clients with a previous login response.
+     * The constructor may be called when an already logged in client is going to use the service. Since the API is
+     * stateless the client receive the primal data and when it passes it back this constructor will restore the client.
+     * @param mixed $id The ID of client to be set.
+     * @param string $username The username used in the logon process.
+     * @param string $password The password used in the logon process.
+     * @param string $session The session ID to be set for the new client.
+     * @param Carbon $time The server timestamp of issued login.
      */
-    public function __construct($response)
+    public function __construct($id, $username, $password, $session, Carbon $time = null)
+    {
+        $this->id = $id;
+        $this->username = $username;
+        $this->password = $password;
+        $this->session = $session;
+        $this->time = $time;
+    }
+
+    /**
+     * Creates new client from SOAP login response.
+     * @param object $response Response object from successful login operation.
+     * @param string $username The username used to login and to receive the response.
+     * @param string $password The password used to login and to receive the response.
+     * @return static The resulting client from the SOAP response given.
+     * @throws InvalidSessionException
+     * @throws SpeedyException
+     */
+    public static function createFromSoapResponse($response, $username, $password)
     {
         if (!is_object($response)) {
-            return;
+            throw new SpeedyException('SOAP response does not contain logged in client.');
         }
 
-        $this->id = isset($response->return->clientId) ? $response->return->clientId : null;
-        $this->session = isset($response->return->sessionId) ? $response->return->sessionId : null;
-        $this->time = isset($response->return->serverTime) ? $response->return->serverTime : null;
+        $id = isset($response->return->clientId) ? $response->return->clientId : null;
+        $session = isset($response->return->sessionId) ? $response->return->sessionId : null;
+        $time = isset($response->return->serverTime) ? $response->return->serverTime : null;
 
-        if ($this->time) {
-            $this->time = new Carbon($this->time);
+        if (!$id || !$username || !$password || !$session) {
+            throw new InvalidSessionException('Cannot create client with insufficient information.');
         }
+
+        // Left separately. Might comment it if it is better to be NULL instead of NOW.
+        if (!$time) {
+            $time = new Carbon($time);
+        }
+
+        return new static($id, $username, $password, $session, $time);
+    }
+
+    public static function createFromArray($array)
+    {
+        if (!is_array($array) || empty($array)) {
+            throw new SpeedyException('SOAP response does not contain logged in client.');
+        }
+
+        $id = isset($array['id']) ? $array['id'] : null;
+        $username = isset($array['username']) ? $array['username'] : null;
+        $password = isset($array['password']) ? $array['password'] : null;
+        $session = isset($array['session_id']) ? $array['session_id'] : null;
+        $time = isset($array['id']) ? $array['id'] : null;
+
+        if (!$id || !$username || !$password || !$session) {
+            throw new InvalidSessionException('Cannot create client with insufficient information.');
+        }
+
+        // Left separately. Might comment it if it is better to be NULL instead of NOW.
+        if (!$time) {
+            $time = new Carbon($time);
+        }
+
+        return new static($id, $username, $password, $session, $time);
     }
 
     /**
@@ -62,6 +132,26 @@ class Client implements JsonSerializable
     }
 
     /**
+     * Returns the logon username of this instance.
+     * @return string
+     */
+    public function username()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Returns the logon password of this instance.
+     * @todo Expand this functionality to remove this password back-and-forward calls (security).
+     * @tag Security
+     * @return string
+     */
+    public function password()
+    {
+        return $this->password;
+    }
+
+    /**
      * Returns the server time of login assigned with this client instance.
      * @return Carbon
      */
@@ -72,6 +162,11 @@ class Client implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return (array) $this;
+        return [
+            'id' => $this->clientId(),
+            'username' => $this->username(),
+            'session' => $this->sessionId(),
+            'time' => $this->serverTime(),
+        ];
     }
 }

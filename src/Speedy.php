@@ -2,9 +2,9 @@
 namespace Rolice\Speedy;
 
 use Illuminate\Support\Facades\Config;
-use Rolice\Speedy\Components\ComponentInterface;
 use Rolice\Speedy\Components\Calculation;
 use Rolice\Speedy\Components\Client;
+use Rolice\Speedy\Components\ComponentInterface;
 use Rolice\Speedy\Exceptions\InvalidUsernameOrPasswordException;
 use Rolice\Speedy\Exceptions\NoUserPermissionsException;
 use Rolice\Speedy\Exceptions\SpeedyException;
@@ -94,20 +94,44 @@ class Speedy
      */
     public function login($username, $password)
     {
+        if ($this->user instanceof Client && $this->active()) {
+            return $this->user;
+        }
+
         $response = $this->call('login', ['username' => $username, 'password' => $password]);
-        $this->user = new Client($response);
+        $this->user = Client::createFromSoapResponse($response, $username, $password);
 
         return $this->user;
     }
 
+    public function createClient($id, $username, $password, $session_id, $time = null)
+    {
+        return new Client($id, $username, $password, $session_id, $time);
+    }
+
     /**
      * Checks if current/previous session is still active and ready for use and refreshes it if required.
+     * @param bool $refresh Whether to refresh the expiration of the session, if it is still active. Does nothing otherwise.
+     * @return bool True if session is still active and ready-to-use, false otherwise.
+     * @internal param Client $client The currently logged in client from which to extract session ID and to perform check against.
+     */
+    public function active($refresh = true)
+    {
+        if ($this->user instanceof Client) {
+            return $this->activeSession($this->user->sessionId(), $refresh);
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if session is still active and ready for use for a given Client object and refreshes it if required.
      * @param Client $client The currently logged in client from which to extract session ID and to perform check against.
      * @param bool $refresh Whether to refresh the expiration of the session, if it is still active. Does nothing otherwise.
      * @return bool True if session is still active and ready-to-use, false otherwise.
      * @throws SoapFault
      */
-    public function active(Client $client, $refresh = true)
+    public function activeClient(Client $client = null, $refresh = true)
     {
         return $this->activeSession($client->sessionId(), $refresh);
     }
@@ -129,8 +153,29 @@ class Speedy
         return isset($response->result) ? !!$response->result : false;
     }
 
-    public function calculate()
+    public function user($data)
     {
+        if (!$this->user instanceof Client && $this->active()) {
+            return $this->user;
+        }
+
+        $client = Client::createFromArray($data);
+
+        if ($this->activeClient($client)) {
+            $this->user = $client;
+        }
+
+        if (!$this->user) {
+            $this->login($client->username(), $client->password());
+        }
+
+        return $this->user;
+    }
+
+    public function calculate($input)
+    {
+        $this->user($input);
+
         $data = new Calculation;
         $data->serviceTypeId = 1;
         $data->broughtToOffice = false;
@@ -145,6 +190,8 @@ class Speedy
             'sessionId' => $this->user->sessionId(),
             'calculation' => $data->toArray()
         ]);
+
+        return $response->return;
     }
 
 }

@@ -20,4 +20,12 @@ class SpeedyController extends Controller
         return response()->json($speedy->activeSession($request->get('session')));
     }
 
+    public function calculate(Request $request)
+    {
+        $speedy = new Speedy();
+        $calculation = $speedy->calculate($request->all());
+
+        return response()->json($calculation);
+    }
+
 }
