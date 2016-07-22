@@ -109,8 +109,20 @@ class Speedy
      */
     public function active(Client $client, $refresh = true)
     {
+        return $this->activeSession($client->sessionId(), $refresh);
+    }
+
+    /**
+     * Checks if current/previous session is still active and ready for use and refreshes it if required.
+     * @param string $session_id The session ID of a session to be checked if it is active or not.
+     * @param bool $refresh Whether to refresh the expiration of the session, if it is still active. Does nothing otherwise.
+     * @return bool True if session is still active and ready-to-use, false otherwise.
+     * @throws SoapFault
+     */
+    public function activeSession($session_id, $refresh = true)
+    {
         $response = $this->call('isSessionActive', [
-            'sessionId' => $client->sessionId(),
+            'sessionId' => $session_id,
             'refreshSession' => !!$refresh
         ]);
 

@@ -2,8 +2,9 @@
 namespace Rolice\Speedy\Components;
 
 use Carbon\Carbon;
+use JsonSerializable;
 
-class Client
+class Client implements JsonSerializable
 {
     /**
      * The ID of the logged in client inside Speedy database.
@@ -67,5 +68,10 @@ class Client
     public function serverTime()
     {
         return $this->time;
+    }
+
+    public function jsonSerialize()
+    {
+        return (array) $this;
     }
 }

@@ -10,7 +10,14 @@ class SpeedyController extends Controller
     public function test(Request $request)
     {
         $speedy = new Speedy();
-        $speedy->login($request->get('username'), $request->get('password'));
+        return response()->json($speedy->login($request->get('username'), $request->get('password')));
+    }
+
+    public function session(Request $request)
+    {
+        $speedy = new Speedy();
+
+        return response()->json($speedy->activeSession($request->get('session')));
     }
 
 }
