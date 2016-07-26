@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Config;
 use Rolice\Speedy\Components\Calculation;
 use Rolice\Speedy\Components\Client;
 use Rolice\Speedy\Components\ComponentInterface;
+use Rolice\Speedy\Components\FilterSite;
+use Rolice\Speedy\Components\Language;
 use Rolice\Speedy\Exceptions\InvalidUsernameOrPasswordException;
 use Rolice\Speedy\Exceptions\NoUserPermissionsException;
 use Rolice\Speedy\Exceptions\SpeedyException;
@@ -155,8 +157,16 @@ class Speedy
 
     public function user($data)
     {
-        if (!$this->user instanceof Client && $this->active()) {
-            return $this->user;
+        if ($data instanceof Client) {
+            $this->user = $data;
+        }
+
+        if ($this->user instanceof Client) {
+            if ($this->active()) {
+                return $this->user;
+            }
+
+            return $this->login($this->user->username(), $this->user->password());
         }
 
         $client = Client::createFromArray($data);
@@ -170,6 +180,41 @@ class Speedy
         }
 
         return $this->user;
+    }
+
+    public function listSitesEx(FilterSite $filter, Language $language)
+    {
+        $response = $this->call('listSitesEx', [
+            'sessionId' => $this->user->sessionId(),
+            'filter' => $filter->toArray(),
+            'language' => $language->get(),
+        ]);
+
+        return $response;
+    }
+
+    public function listStreets($site_id, Language $language, $name = null)
+    {
+        $response = $this->call('listStreets', [
+            'sessionId' => $this->user->sessionId(),
+            'siteId' => (int)$site_id,
+            'name' => $name,
+            'language' => $language->get(),
+        ]);
+
+        return $response;
+    }
+
+    public function listOfficesEx($site_id, Language $language, $name = null)
+    {
+        $response = $this->call('listOfficesEx', [
+            'sessionId' => $this->user->sessionId(),
+            'siteId' => (int)$site_id,
+            'name' => $name,
+            'language' => $language->get(),
+        ]);
+
+        return $response;
     }
 
     public function calculate($input)

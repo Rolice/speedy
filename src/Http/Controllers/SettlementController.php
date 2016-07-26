@@ -18,7 +18,6 @@ class SettlementController extends Controller
 
     public function index()
     {
-//        return Settlement::with('country')->orderBy('name')->get();
     }
 
     public function autocomplete()
@@ -29,7 +28,7 @@ class SettlementController extends Controller
             return ['results' => [], 'more' => false];
         }
 
-        $client = Client::createFromSessionId(Input::get('session'));
+        $client = Client::createFromArray(Input::all());
 
         if (!$client) {
             return ['results' => [], 'more' => false];
@@ -48,17 +47,22 @@ class SettlementController extends Controller
             throw new SpeedyException('Error while searching for Speedy sites.');
         }
 
+        $result = [];
         $settlements = SiteEx::createFromSoapResponse($sites->return);
 
         foreach ($settlements as $settlement) {
-            $entry = ['id' => $settlement->id, 'name' => $settlement->formatted];
-            $entry['ref'] = $settlement->reference;
+            if (!$settlement instanceof SiteEx) {
+                continue;
+            }
+
+            $entry = ['id' => $settlement->site->id, 'name' => $settlement->site->formatted];
+            $entry['ref'] = $settlement->site->name;
 
             $result[] = (object)$entry;
         }
 
         return [
-            'results' => $sites,
+            'results' => $result,
             'more' => false,
         ];
     }

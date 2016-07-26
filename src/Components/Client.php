@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use JsonSerializable;
 use Rolice\Speedy\Exceptions\InvalidSessionException;
 use Rolice\Speedy\Exceptions\SpeedyException;
+use Exception;
 
 class Client implements JsonSerializable
 {
@@ -81,9 +82,14 @@ class Client implements JsonSerializable
             throw new InvalidSessionException('Cannot create client with insufficient information.');
         }
 
-        // Left separately. Might comment it if it is better to be NULL instead of NOW.
-        if (!$time) {
-            $time = new Carbon($time);
+        if ($time) {
+            try {
+                $time = new Carbon($time);
+            }
+            catch(Exception $e)
+            {
+                $time = null;
+            }
         }
 
         return new static($id, $username, $password, $session, $time);
@@ -99,18 +105,28 @@ class Client implements JsonSerializable
         $username = isset($array['username']) ? $array['username'] : null;
         $password = isset($array['password']) ? $array['password'] : null;
         $session = isset($array['session_id']) ? $array['session_id'] : null;
-        $time = isset($array['id']) ? $array['id'] : null;
+        $time = isset($array['time']) ? $array['time'] : null;
 
-        if (!$id || !$username || !$password || !$session) {
+        if (!$id || !$username || !$password) {
             throw new InvalidSessionException('Cannot create client with insufficient information.');
         }
 
-        // Left separately. Might comment it if it is better to be NULL instead of NOW.
-        if (!$time) {
-            $time = new Carbon($time);
+        if ($time) {
+            try {
+                $time = new Carbon($time);
+            }
+            catch(Exception $e)
+            {
+                $time = null;
+            }
         }
 
         return new static($id, $username, $password, $session, $time);
+    }
+
+    public static function createFromSessionId($session_id)
+    {
+        return new static(0, '', '', $session_id);
     }
 
     /**
@@ -166,7 +182,7 @@ class Client implements JsonSerializable
             'id' => $this->clientId(),
             'username' => $this->username(),
             'session' => $this->sessionId(),
-            'time' => $this->serverTime(),
+            'time' => $this->serverTime()->toIso8601String(),
         ];
     }
 }

@@ -1,6 +1,13 @@
 <?php
 namespace Rolice\Speedy\Components;
 
+use Rolice\Speedy\Exceptions\SpeedyException;
+
+/**
+ * Class Site
+ * @property string formatted
+ * @package Rolice\Speedy\Components
+ */
 class Site implements ComponentInterface
 {
 
@@ -91,5 +98,58 @@ class Site implements ComponentInterface
      * @var string
      */
     public $servingDays;
+
+    /**
+     * This magic method is used to simulate and support fields like Eloquent Model do. This is done to maintain
+     * compatibility of the implementation with Eloquent models, like it is currently in Econt.
+     * @param string $name The name of the field that is being accessed and does not have declaration.
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        if (method_exists($this, 'get' . ucfirst($name) . 'Attribute')) {
+            return $this->{'get' . ucfirst($name) . 'Attribute'}();
+        }
+
+        if (method_exists($this, "get{$name}Attribute")) {
+            return $this->{"get{$name}Attribute"}();
+        }
+
+        return null;
+    }
+
+    public static function createFromSoapResponse($response)
+    {
+        $result = new static;
+        $result->addrNomen = isset($response->addrNomen) ? $response->addrNomen : null;
+        $result->id = isset($response->id) ? $response->id : null;
+        $result->municipality = isset($response->municipality) ? $response->municipality : null;
+        $result->name = isset($response->name) ? $response->name : null;
+        $result->postCode = isset($response->postCode) ? $response->postCode : null;
+        $result->region = isset($response->region) ? $response->region : null;
+        $result->type = isset($response->type) ? $response->type : null;
+        $result->countryId = isset($response->countryId) ? $response->countryId : null;
+        $result->servingOfficeId = isset($response->servingOfficeId) ? $response->servingOfficeId : null;
+        $result->coordX = isset($response->coordX) ? $response->coordX : null;
+        $result->coordY = isset($response->coordY) ? $response->coordY : null;
+        $result->coordType = isset($response->coordType) ? $response->coordType : null;
+        $result->servingDays = isset($response->servingDays) ? $response->servingDays : null;
+
+        if (!$result->id || !$result->name || !$result->addrNomen) {
+            throw new SpeedyException('Invalid site detected.');
+        }
+
+        return $result;
+    }
+
+    /**
+     * Retrieves formatted name of a site that is distinctive and descriptive for an end-user.
+     * This method and its name are left to be compatible with possible future models like in Econt implementation.
+     * @return string
+     */
+    public function getFormattedAttribute()
+    {
+        return "{$this->type} {$this->name} ($this->postCode)";
+    }
 
 }
