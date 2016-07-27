@@ -72,8 +72,11 @@ class OfficeEx implements ComponentInterface
                 $instance->id = isset($office->id) ? $office->id : null;
                 $instance->name = isset($office->name) ? $office->name : null;
                 $instance->siteId = isset($office->siteId) ? $office->siteId : null;
-                $instance->workTime = WorkingTime::createFromSoapResponse($office);
+                $instance->address = AddressEx::createFromSoapResponse($office->address);
+                $instance->workingTime = WorkingTime::createFromSoapResponse($office);
+                $instance->maxParcelDimensions = Size::createFromSoapResponse($office->maxParcelDimensions);
                 $instance->maxParcelWeight = isset($office->maxParcelWeight) ? (float)$office->maxParcelWeight : null;
+                $instance->workingTimeSchedule = ExactWorkTime::createFromSoapResponse($office->workingTimeSchedule);
 
                 if (!$instance->id || !$instance->name) {
                     throw new SpeedyException('Invalid office detected.');

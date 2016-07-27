@@ -1,22 +1,24 @@
 <?php
 namespace Rolice\Speedy\Components;
 
-use Carbon\CarbonInterval;
 use DateInterval;
+use Rolice\Speedy\Exceptions\SpeedyException;
+use Rolice\Speedy\Traits\Timer;
 
 class WorkingTime
 {
 
+    use Timer;
 
     /**
      * The start time of the regular working time.
-     * @var CarbonInterval
+     * @var DateInterval
      */
     protected $from;
 
     /**
      * The end time of the regular working time.
-     * @var CarbonInterval
+     * @var DateInterval
      */
     protected $to;
 
@@ -24,7 +26,7 @@ class WorkingTime
      * Half-day working time of the this work time.
      * @var static
      */
-    protected $half = null;
+    private $half = null;
 
     public function __construct(DateInterval $from, DateInterval $to, self $half = null)
     {
@@ -62,16 +64,19 @@ class WorkingTime
 
     public static function create($from, $to, $half_from, $half_to)
     {
-        $from = CarbonInterval::createFromDateString($from);
-        $to = CarbonInterval::createFromDateString($to);
+        $from = static::ParseTime($from);
+        $to = static::ParseTime($to);
 
-        $half_from = CarbonInterval::createFromDateString($half_from);
-        $half_to = CarbonInterval::createFromDateString($half_to);
+        if (!$from || !$to) {
+            throw new SpeedyException('Invalid work time detected.');
+        }
 
         $half = null;
 
         if ($half_from && $half_to) {
-            $half = new static($from, $to, null);
+            $half_from = static::ParseTime($half_from);
+            $half_to = static::ParseTime($half_to);
+            $half = new static($half_from, $half_to, null);
         }
 
         return new static($from, $to, $half);
