@@ -98,7 +98,7 @@ class Client implements JsonSerializable
     public static function createFromArray($array)
     {
         if (!is_array($array) || empty($array)) {
-            throw new SpeedyException('SOAP response does not contain logged in client.');
+            throw new SpeedyException('SOAP request does not contain logged in client.');
         }
 
         $id = isset($array['id']) ? $array['id'] : null;

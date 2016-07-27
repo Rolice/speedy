@@ -1,6 +1,7 @@
 <?php
 namespace Rolice\Speedy;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
 use Rolice\Speedy\Components\Calculation;
 use Rolice\Speedy\Components\Client;
@@ -166,7 +167,11 @@ class Speedy
                 return $this->user;
             }
 
-            return $this->login($this->user->username(), $this->user->password());
+            if ($this->user->username() && $this->user->password()) {
+                return $this->login($this->user->username(), $this->user->password());
+            }
+
+            return $this->user;
         }
 
         $client = Client::createFromArray($data);
@@ -211,6 +216,20 @@ class Speedy
             'sessionId' => $this->user->sessionId(),
             'siteId' => (int)$site_id,
             'name' => $name,
+            'language' => $language->get(),
+        ]);
+
+        return $response;
+    }
+
+    public function listServices(Language $language, Carbon $date = null)
+    {
+        if(!$date)
+            $date = new Carbon();
+
+        $response = $this->call('listServices', [
+            'sessionId' => $this->user->sessionId(),
+            'date' => $date->format('Y-m-d'),
             'language' => $language->get(),
         ]);
 
