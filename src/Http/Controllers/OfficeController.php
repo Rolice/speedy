@@ -32,7 +32,10 @@ class OfficeController extends Controller
             return ['results' => [], 'more' => false];
         }
 
-        $speedy = new Speedy();
+        /**
+         * @var Speedy $speedy
+         */
+        $speedy = app('speedy');
         $speedy->user($client);
 
         $offices = $speedy->listOfficesEx($settlement, Language::create(), $name);

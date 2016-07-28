@@ -3,6 +3,7 @@ namespace Rolice\Speedy\Components;
 
 use Illuminate\Support\Collection;
 use Rolice\Speedy\Exceptions\SpeedyException;
+use Rolice\Speedy\Traits\Serializable;
 
 class SiteEx implements ComponentInterface
 {

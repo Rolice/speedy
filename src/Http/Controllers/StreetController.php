@@ -33,7 +33,10 @@ class StreetController extends Controller
             return ['results' => [], 'more' => false];
         }
 
-        $speedy = new Speedy();
+        /**
+         * @var Speedy $speedy
+         */
+        $speedy = app('speedy');
         $speedy->user($client);
 
         $streets = $speedy->listStreets($settlement, Language::create(), $name);

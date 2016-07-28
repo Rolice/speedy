@@ -4,6 +4,7 @@ namespace Rolice\Speedy\Components;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Rolice\Speedy\Exceptions\SpeedyException;
+use Rolice\Speedy\Traits\Serializable;
 
 class CourierService implements ComponentInterface
 {
@@ -14,7 +15,7 @@ class CourierService implements ComponentInterface
      * The default service ID.
      * @todo Experimental.
      */
-    const DefaultServiceId = 113;
+    const DefaultServiceId = 3;
 
     /**
      * Courier service type ID

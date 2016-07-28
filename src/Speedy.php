@@ -60,6 +60,10 @@ class Speedy
                 }
             }
 
+            if (!$message) {
+                $message = $fault->getMessage();
+            }
+
             if (class_exists("\\Rolice\\Speedy\\Exceptions\\{$exception}")) {
                 $class = "\\Rolice\\Speedy\\Exceptions\\{$exception}";
                 throw new $class($message);
@@ -187,6 +191,16 @@ class Speedy
         return $this->user;
     }
 
+    public function getSiteById($id)
+    {
+        $response = $this->call('getSiteById', [
+            'sessionId' => $this->user->sessionId(),
+            'siteId' => (int) $id,
+        ]);
+
+        return $response;
+    }
+
     public function listSitesEx(FilterSite $filter, Language $language)
     {
         $response = $this->call('listSitesEx', [
@@ -224,8 +238,9 @@ class Speedy
 
     public function listServices(Language $language, Carbon $date = null)
     {
-        if(!$date)
+        if (!$date) {
             $date = new Carbon();
+        }
 
         $response = $this->call('listServices', [
             'sessionId' => $this->user->sessionId(),
@@ -236,26 +251,14 @@ class Speedy
         return $response;
     }
 
-    public function calculate($input)
+    public function calculate(Calculation $calculation)
     {
-        $this->user($input);
-
-        $data = new Calculation;
-        $data->serviceTypeId = 1;
-        $data->broughtToOffice = false;
-        $data->parcelsCount = 3;
-        $data->weightDeclared = 3.650;
-        $data->documents = false;
-        $data->fragile = false;
-        $data->palletized = false;
-        $data->senderCountryId = 100;
-
         $response = $this->call('calculate', [
             'sessionId' => $this->user->sessionId(),
-            'calculation' => $data->toArray()
+            'calculation' => $calculation->toArray(),
         ]);
 
-        return $response->return;
+        return $response;
     }
 
 }

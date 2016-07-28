@@ -2,6 +2,7 @@
 namespace Rolice\Speedy\Components;
 
 use Rolice\Speedy\Exceptions\SpeedyException;
+use Rolice\Speedy\Traits\Serializable;
 
 class Size implements ComponentInterface
 {

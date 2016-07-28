@@ -2,12 +2,79 @@
 namespace Rolice\Speedy\Components;
 
 use Carbon\Carbon;
+use Closure;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Rolice\Speedy\Traits\Serializable;
 
 class Calculation implements ComponentInterface
 {
 
     use Serializable;
+
+    const RequestMapping = [
+        'senderSiteId' => 'sender.settlement',
+        'receiverSiteId' => 'receiver.settlement',
+        'weightDeclared' => 'shipment.weight',
+    ];
+
+    const TypeMapping = [
+        'autoAdjustTakingTime' => 'bool',
+        'serviceTypeId' => 'int',
+        'willBringToOfficeId' => 'float',
+        'broughtToOffice' => 'bool',
+        'officeToBeCalledId' => 'int',
+        'toBeCalled' => 'bool',
+        'fixedTimeDelivery' => 'int',
+        'deferredDeliveryWorkDays' => 'int',
+        'amountInsuranceBase' => 'float',
+        'amountCodBase' => 'float',
+        'payCodToThirdParty' => 'bool',
+        'parcelsCount' => 'int',
+        'weightDeclared' => 'float',
+        'documents' => 'bool',
+        'fragile' => 'bool',
+        'palletized' => 'bool',
+        'senderId' => 'int',
+        'senderCountryId' => 'int',
+        'senderSiteId' => 'int',
+        'receiverId' => 'int',
+        'receiverCountryId' => 'int',
+        'receiverSiteId' => 'int',
+        'payerType' => 'int',
+        'payerRefId' => 'int',
+        'payerTypeInsurance' => 'int',
+        'payerRefInsuranceId' => 'int',
+        'payerTypePackings' => 'int',
+        'payerRefPackingsId' => 'int',
+        'specialDeliveryId' => 'int',
+        'includeShippingPriceInCod' => 'bool',
+        'checkTBCOfficeWorkDay' => 'bool',
+    ];
+
+    const SiteMapping = ['senderSiteId', 'receiverSiteId'];
+    const CountryMapping = ['senderCountryId', 'receiverCountryId'];
+
+    const Nullable = [
+        'willBringToOfficeId',
+        'officeToBeCalledId',
+        'fixedTimeDelivery',
+        'deferredDeliveryWorkDays',
+        'amountInsuranceBase',
+        'amountCodBase',
+        'senderId',
+        'senderCountryId',
+        'senderSiteId',
+        'receiverId',
+        'receiverCountryId',
+        'receiverSiteId',
+        'payerRefId',
+        'payerTypeInsurance',
+        'payerRefInsuranceId',
+        'payerTypePackings',
+        'payerRefPackingsId',
+        'specialDeliveryId',
+    ];
 
     /**
      * The date for shipment pick-up (the "time" component is ignored). Default value is "today".
@@ -236,6 +303,80 @@ class Calculation implements ComponentInterface
     public function __construct()
     {
         $this->parcels = new Collection();
+    }
+
+    public function registerCallback(Closure $callback)
+    {
+
+    }
+
+    public static function createFromRequest(array $data)
+    {
+        $result = new static;
+
+        foreach ($result as $expected => $default) {
+            $result->$expected = Arr::has($data, $expected) ? Arr::get($data, $expected) : null;
+        }
+
+        foreach (static::RequestMapping as $expected => $mapping) {
+            $result->$expected = Arr::has($data, $mapping) ? Arr::get($data, $mapping) : null;
+        }
+
+        $result->mapSites();
+        $result->mapCountries();
+
+        foreach (static::TypeMapping as $expected => $type) {
+            $method = $type . 'val';
+            $result->$expected = $method($result->$expected);
+        }
+
+        $result->mapNullable();
+
+        if (!$result->serviceTypeId) {
+            $result->serviceTypeId = CourierService::DefaultServiceId;
+        }
+
+        if (!$result->parcelsCount) {
+            $result->parcelsCount = 1;
+        }
+
+        return $result;
+    }
+
+    protected function mapSites()
+    {
+        foreach (static::SiteMapping as $index => $expected) {
+            if ((string)(int)$this->$expected != $this->$expected) {
+                $site = Site::find($this->$expected);
+
+                if ($site instanceof Site) {
+                    $this->$expected = $site->id;
+                    $this->{static::CountryMapping[$index]} = $site->countryId;
+                }
+            }
+        }
+    }
+
+    protected function mapCountries()
+    {
+        foreach (static::CountryMapping as $index => $expected) {
+            if (!$this->$expected) {
+                $site = Site::getById($this->{static::SiteMapping[$index]});
+
+                if ($site instanceof Site) {
+                    $this->{static::CountryMapping[$index]} = $site->countryId;
+                }
+            }
+        }
+    }
+
+    protected function mapNullable()
+    {
+        foreach (static::Nullable as $expected) {
+            if (!$this->$expected) {
+                $this->$expected = null;
+            }
+        }
     }
 
 }

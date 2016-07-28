@@ -38,7 +38,10 @@ class SettlementController extends Controller
 
         $filter->searchString = $name;
 
-        $speedy = new Speedy();
+        /**
+         * @var Speedy $speedy
+         */
+        $speedy = app('speedy');
         $speedy->user($client);
 
         $sites = $speedy->listSitesEx($filter, new Language(App::getLocale()));

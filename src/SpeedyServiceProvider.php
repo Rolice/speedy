@@ -44,7 +44,7 @@ class SpeedyServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('Speedy', function () {
+        $this->app->singleton('speedy', function () {
             return new Speedy;
         });
 
@@ -62,6 +62,6 @@ class SpeedyServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['Speedy'];
+        return ['speedy'];
     }
 }

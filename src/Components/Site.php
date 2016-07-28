@@ -2,6 +2,8 @@
 namespace Rolice\Speedy\Components;
 
 use Rolice\Speedy\Exceptions\SpeedyException;
+use Rolice\Speedy\Speedy;
+use Rolice\Speedy\Traits\Serializable;
 
 /**
  * Class Site
@@ -151,5 +153,54 @@ class Site implements ComponentInterface
     {
         return "{$this->type} {$this->name} ($this->postCode)";
     }
+
+    public static function getById($id)
+    {
+        $speedy = app('speedy');
+        $site = $speedy->getSiteById($id);
+
+        if (!isset($site->return) || !$site->return) {
+            throw new SpeedyException('Invalid site detected by ID.');
+        }
+
+        $site = Site::createFromSoapResponse($site->return);
+
+        return $site;
+    }
+
+    public static function find($name)
+    {
+        if (!$name) {
+            return null;
+        }
+
+        $filter = new FilterSite;
+        $filter->searchString = $name;
+
+        /**
+         * @var Speedy $speedy
+         */
+        $speedy = app('speedy');
+        $sites = $speedy->listSitesEx($filter, Language::create());
+
+        if (!isset($sites->return)) {
+            throw new SpeedyException('Error while searching for Speedy sites.');
+        }
+
+        $settlements = SiteEx::createFromSoapResponse($sites->return);
+
+        $site_ex = $settlements->first();
+
+        if (!$site_ex || !$site_ex instanceof SiteEx) {
+            return null;
+        }
+
+        if (!$site_ex->site instanceof static) {
+            return null;
+        }
+
+        return $site_ex->site;
+    }
+
 
 }

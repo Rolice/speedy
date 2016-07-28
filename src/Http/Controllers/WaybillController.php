@@ -3,6 +3,8 @@ namespace Rolice\Speedy\Http\Controllers;
 
 use Rolice\Speedy\Components\Calculation;
 use Rolice\Speedy\Components\Client;
+use Rolice\Speedy\Components\Result;
+use Rolice\Speedy\Exceptions\SpeedyException;
 use Rolice\Speedy\Http\Requests\CalculateRequest;
 use Rolice\Speedy\Http\Requests\WaybillRequest;
 use Rolice\Speedy\Speedy;
@@ -17,21 +19,31 @@ class WaybillController extends Controller
 
     public function calculate(CalculateRequest $request)
     {
-        $client = Client::createFromArray($request->all());
+        $data = $request->all();
+        $client = Client::createFromArray($data);
 
         if (!$client) {
             return null;
         }
 
-        $speedy = new Speedy();
+        /**
+         * @var Speedy $speedy
+         */
+        $speedy = app('speedy');
         $speedy->user($client);
 
-        $calculation = new Calculation();
-        $calculation->serviceTypeId = false;
+
+        $calculation = Calculation::createFromRequest($data);
 
         $calculation = $speedy->calculate($calculation);
 
-        return $calculation;
+        if (!isset($calculation->return) || !$calculation->return) {
+            throw new SpeedyException('Invalid calculation detected.');
+        }
+
+        $result = Result::createFromSoapResponse($calculation->return);
+
+        return response()->json($result);
     }
 
 }
