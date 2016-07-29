@@ -1,6 +1,8 @@
 <?php
-namespace Rolice\Speedy\Components;
+namespace Rolice\Speedy\Components\Param;
 
+use Rolice\Speedy\Components\ComponentInterface;
+use Rolice\Speedy\Components\Size;
 use Rolice\Speedy\Traits\Serializable;
 
 class ParcelInfo implements ComponentInterface

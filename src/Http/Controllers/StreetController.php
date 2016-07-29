@@ -3,8 +3,8 @@ namespace Rolice\Speedy\Http\Controllers;
 
 use Input;
 use Rolice\Speedy\Components\Client;
-use Rolice\Speedy\Components\Language;
-use Rolice\Speedy\Components\Street;
+use Rolice\Speedy\Components\Param\Language;
+use Rolice\Speedy\Components\Result\Street;
 use Rolice\Speedy\Exceptions\SpeedyException;
 use Rolice\Speedy\Speedy;
 

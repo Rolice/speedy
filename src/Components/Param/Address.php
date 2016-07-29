@@ -1,19 +1,26 @@
 <?php
-namespace Rolice\Speedy\Components;
+namespace Rolice\Speedy\Components\Param;
 
+use Rolice\Speedy\Components\ComponentInterface;
 use Rolice\Speedy\Exceptions\SpeedyException;
 use Rolice\Speedy\Traits\Serializable;
 
-class AddressEx implements ComponentInterface
+class Address implements ComponentInterface
 {
 
     use Serializable;
 
     /**
-     * The Speedy site of the address
-     * @var Site
+     * The ID of the site.
+     * @var int
      */
-    public $site;
+    public $siteId;
+
+    /**
+     * The name of the site.
+     * @var string
+     */
+    public $siteName;
 
     /**
      * The postal code of the address.
@@ -106,40 +113,16 @@ class AddressEx implements ComponentInterface
     public $coordY;
 
     /**
-     * Speedy-specific type of the GPS coordinates.
-     * @var int
-     */
-    public $coordTypeId;
-
-    /**
      * Common object ID assigned by Speedy.
      * @var int|null
      */
     public $commonObjectId;
 
     /**
-     * Common object name assigned by Speedy.
+     * JSON representation of this address.
      * @var string
      */
-    public $commonObjectName;
-
-    /**
-     * Concatenated full address.
-     * @var string
-     */
-    public $fullAddressString;
-
-    /**
-     * Site-specific address.
-     * @var string
-     */
-    public $siteAddressString;
-
-    /**
-     * Concatenated local address.
-     * @var string
-     */
-    public $localAddressString;
+    public $serializedAddress;
 
     /**
      * The ID of the country inside Speedy database.
@@ -170,7 +153,8 @@ class AddressEx implements ComponentInterface
     {
         $result = new static;
 
-        $result->site = isset($response->resultSite) && is_object($response->resultSite) ? Site::createFromSoapResponse($response->resultSite) : null;
+        $result->siteId = isset($response->siteId) ? (int)$response->siteId : null;
+        $result->siteName = isset($response->siteName) ? $response->siteName : null;
         $result->postCode = isset($response->postCode) ? $response->postCode : null;
         $result->streetName = isset($response->streetName) ? $response->streetName : null;
         $result->streetType = isset($response->streetType) ? $response->streetType : null;
@@ -186,12 +170,8 @@ class AddressEx implements ComponentInterface
         $result->addressNote = isset($response->addressNote) ? $response->addressNote : null;
         $result->coordX = isset($response->coordX) ? (float)$response->coordX : null;
         $result->coordY = isset($response->coordY) ? (float)$response->coordY : null;
-        $result->coordTypeId = isset($response->coordTypeId) ? (int)$response->coordTypeId : null;
         $result->commonObjectId = isset($response->commonObjectId) ? (int)$response->commonObjectId : null;
-        $result->commonObjectName = isset($response->commonObjectName) ? $response->commonObjectName : null;
-        $result->fullAddressString = isset($response->fullAddressString) ? $response->fullAddressString : null;
-        $result->siteAddressString = isset($response->siteAddressString) ? $response->siteAddressString : null;
-        $result->localAddressString = isset($response->localAddressString) ? $response->localAddressString : null;
+        $result->serializedAddress = isset($response->serializedAddress) ? (int)$response->serializedAddress : null;
         $result->countryId = isset($response->countryId) ? (int)$response->countryId : null;
         $result->frnAddressLine1 = isset($response->frnAddressLine1) ? $response->frnAddressLine1 : null;
         $result->frnAddressLine2 = isset($response->frnAddressLine2) ? $response->frnAddressLine2 : null;
@@ -209,8 +189,8 @@ class AddressEx implements ComponentInterface
             $result->commonObjectId = null;
         }
 
-        if (!$result->site || !$response->countryId) {
-            throw new SpeedyException('Invalid address ex detected.');
+        if (!$result->siteId || !$response->countryId) {
+            throw new SpeedyException('Invalid address detected.');
         }
 
         return $result;

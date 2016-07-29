@@ -3,10 +3,9 @@ namespace Rolice\Speedy\Http\Controllers;
 
 use Input;
 use Rolice\Speedy\Components\Client;
-use Rolice\Speedy\Components\Language;
-use Rolice\Speedy\Components\OfficeEx;
-use Rolice\Speedy\Components\Site;
-use Rolice\Speedy\Exceptions\SpeedyException;
+use Rolice\Speedy\Components\Param\Language;
+use Rolice\Speedy\Components\Result\OfficeEx;
+use Rolice\Speedy\Components\Result\Site;
 use Rolice\Speedy\Speedy;
 
 class OfficeController extends Controller
@@ -42,7 +41,7 @@ class OfficeController extends Controller
             }
         }
 
-        $settlement = (int) $settlement;
+        $settlement = (int)$settlement;
 
         $name = htmlentities(Input::get('query'), ENT_QUOTES, 'UTF-8', false);
 

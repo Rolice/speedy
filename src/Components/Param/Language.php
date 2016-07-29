@@ -1,5 +1,5 @@
 <?php
-namespace Rolice\Speedy\Components;
+namespace Rolice\Speedy\Components\Param;
 
 
 class Language

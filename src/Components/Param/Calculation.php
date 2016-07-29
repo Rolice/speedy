@@ -1,10 +1,12 @@
 <?php
-namespace Rolice\Speedy\Components;
+namespace Rolice\Speedy\Components\Param;
 
 use Carbon\Carbon;
-use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Rolice\Speedy\Components\ComponentInterface;
+use Rolice\Speedy\Components\Result\CourierService;
+use Rolice\Speedy\Components\Result\Site;
 use Rolice\Speedy\Traits\Serializable;
 
 class Calculation implements ComponentInterface
@@ -303,11 +305,6 @@ class Calculation implements ComponentInterface
     public function __construct()
     {
         $this->parcels = new Collection();
-    }
-
-    public function registerCallback(Closure $callback)
-    {
-
     }
 
     public static function createFromRequest(array $data)

@@ -1,9 +1,9 @@
 <?php
 namespace Rolice\Speedy\Http\Controllers;
 
-use Rolice\Speedy\Components\Calculation;
 use Rolice\Speedy\Components\Client;
-use Rolice\Speedy\Components\Result;
+use Rolice\Speedy\Components\Param\Calculation;
+use Rolice\Speedy\Components\Result\Calculation as Result;
 use Rolice\Speedy\Exceptions\SpeedyException;
 use Rolice\Speedy\Http\Requests\CalculateRequest;
 use Rolice\Speedy\Http\Requests\WaybillRequest;

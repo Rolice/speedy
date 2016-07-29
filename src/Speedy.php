@@ -3,11 +3,11 @@ namespace Rolice\Speedy;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
-use Rolice\Speedy\Components\Calculation;
+use Rolice\Speedy\Components\Param\Calculation;
 use Rolice\Speedy\Components\Client;
 use Rolice\Speedy\Components\ComponentInterface;
-use Rolice\Speedy\Components\FilterSite;
-use Rolice\Speedy\Components\Language;
+use Rolice\Speedy\Components\PAram\FilterSite;
+use Rolice\Speedy\Components\Param\Language;
 use Rolice\Speedy\Exceptions\InvalidUsernameOrPasswordException;
 use Rolice\Speedy\Exceptions\NoUserPermissionsException;
 use Rolice\Speedy\Exceptions\SpeedyException;
@@ -195,7 +195,7 @@ class Speedy
     {
         $response = $this->call('getSiteById', [
             'sessionId' => $this->user->sessionId(),
-            'siteId' => (int) $id,
+            'siteId' => (int)$id,
         ]);
 
         return $response;

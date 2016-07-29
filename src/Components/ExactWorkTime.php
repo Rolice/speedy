@@ -64,7 +64,7 @@ class ExactWorkTime
 
     /**
      * Returns current "opening" time
-     * @return CarbonInterval
+     * @return DateInterval
      */
     public function form()
     {
@@ -73,7 +73,7 @@ class ExactWorkTime
 
     /**
      * Returns this "closing" time
-     * @return CarbonInterval
+     * @return DateInterval
      */
     public function to()
     {

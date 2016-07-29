@@ -1,7 +1,11 @@
 <?php
-namespace Rolice\Speedy\Components;
+namespace Rolice\Speedy\Components\Result;
 
 use Illuminate\Support\Collection;
+use Rolice\Speedy\Components\ComponentInterface;
+use Rolice\Speedy\Components\ExactWorkTime;
+use Rolice\Speedy\Components\Size;
+use Rolice\Speedy\Components\WorkingTime;
 use Rolice\Speedy\Exceptions\SpeedyException;
 use Rolice\Speedy\Traits\Serializable;
 

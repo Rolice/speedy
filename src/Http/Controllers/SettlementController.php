@@ -5,9 +5,9 @@ use App;
 use App\Http\Controllers\Controller;
 use Input;
 use Rolice\Speedy\Components\Client;
-use Rolice\Speedy\Components\FilterSite;
-use Rolice\Speedy\Components\Language;
-use Rolice\Speedy\Components\SiteEx;
+use Rolice\Speedy\Components\Param\FilterSite;
+use Rolice\Speedy\Components\Param\Language;
+use Rolice\Speedy\Components\Result\SiteEx;
 use Rolice\Speedy\Exceptions\SpeedyException;
 use Rolice\Speedy\Speedy;
 

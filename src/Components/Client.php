@@ -95,10 +95,18 @@ class Client implements JsonSerializable
         return new static($id, $username, $password, $session, $time);
     }
 
+    /**
+     * Creates client instance from array populated with credentials, session ID and so on.
+     * If the session passed is expired a new one is automatically started with the username and password given.
+     * @param mixed $array
+     * @return static
+     * @throws InvalidSessionException
+     * @throws SpeedyException
+     */
     public static function createFromArray($array)
     {
         if (!is_array($array) || empty($array)) {
-            throw new SpeedyException('SOAP request does not contain logged in client.');
+            throw new SpeedyException('Array data does not contain Speedy client prerequisites.');
         }
 
         $id = isset($array['id']) ? $array['id'] : null;
@@ -124,6 +132,12 @@ class Client implements JsonSerializable
         return new static($id, $username, $password, $session, $time);
     }
 
+    /**
+     * Creates a client only with session ID, that is passed. Use this method only if you are sure that the session is
+     * not expired. Otherwise clients created with this method most likely will raise InvalidSessionException.
+     * @param string $session_id The session ID of the client.
+     * @return static
+     */
     public static function createFromSessionId($session_id)
     {
         return new static(0, '', '', $session_id);
@@ -176,6 +190,10 @@ class Client implements JsonSerializable
         return $this->time;
     }
 
+    /**
+     * JsonSerializable-compliant method, that prepares this instance for JSON serialization.
+     * @return array
+     */
     public function jsonSerialize()
     {
         return [

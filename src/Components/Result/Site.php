@@ -1,6 +1,10 @@
 <?php
-namespace Rolice\Speedy\Components;
+namespace Rolice\Speedy\Components\Result;
 
+use Rolice\Speedy\Components\AddrNomen;
+use Rolice\Speedy\Components\ComponentInterface;
+use Rolice\Speedy\Components\Param\FilterSite;
+use Rolice\Speedy\Components\Param\Language;
 use Rolice\Speedy\Exceptions\SpeedyException;
 use Rolice\Speedy\Speedy;
 use Rolice\Speedy\Traits\Serializable;
@@ -156,6 +160,9 @@ class Site implements ComponentInterface
 
     public static function getById($id)
     {
+        /**
+         * @var Speedy $speedy
+         */
         $speedy = app('speedy');
         $site = $speedy->getSiteById($id);
 

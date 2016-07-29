@@ -1,6 +1,7 @@
 <?php
-namespace Rolice\Speedy\Components;
+namespace Rolice\Speedy\Components\Param;
 
+use Rolice\Speedy\Components\ComponentInterface;
 use Rolice\Speedy\Traits\Serializable;
 
 class AddressSearch implements ComponentInterface

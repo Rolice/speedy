@@ -1,13 +1,14 @@
 <?php
-namespace Rolice\Speedy\Components;
+namespace Rolice\Speedy\Components\Result;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Rolice\Speedy\Components\ComponentInterface;
 use Rolice\Speedy\Exceptions\SpeedyException;
 use Rolice\Speedy\Traits\Serializable;
 use Rolice\Speedy\Traits\Timer;
 
-class Result implements ComponentInterface
+class Calculation implements ComponentInterface
 {
 
     use Serializable;
