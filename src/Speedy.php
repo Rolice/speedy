@@ -8,6 +8,9 @@ use Rolice\Speedy\Components\Client;
 use Rolice\Speedy\Components\ComponentInterface;
 use Rolice\Speedy\Components\PAram\FilterSite;
 use Rolice\Speedy\Components\Param\Language;
+use Rolice\Speedy\Components\Param\Pdf;
+use Rolice\Speedy\Components\Param\Picking;
+use Rolice\Speedy\Components\Result\BOL;
 use Rolice\Speedy\Exceptions\InvalidUsernameOrPasswordException;
 use Rolice\Speedy\Exceptions\NoUserPermissionsException;
 use Rolice\Speedy\Exceptions\SpeedyException;
@@ -261,4 +264,34 @@ class Speedy
         return $response;
     }
 
+    public function createBillOfLading(Picking $picking)
+    {
+        $response = $this->call('createBillOfLading', [
+            'sessionId' => $this->user->sessionId(),
+            'picking' => $picking->toArray(),
+        ]);
+
+        return $response;
+    }
+
+    public function createPDF(Pdf $pdf)
+    {
+        $response = $this->call('createPDF', [
+            'sessionId' => $this->user->sessionId(),
+            'params' => $pdf->toArray(),
+        ]);
+
+        return $response;
+    }
+
+    public function createPDFEx(Pdf $pdf)
+    {
+        $response = $this->call('createPDFEx', [
+            'sessionId' => $this->user->sessionId(),
+            'params' => $pdf->toArray(),
+        ]);
+
+        return $response;
+    }
+    
 }

@@ -18,9 +18,11 @@ Route::group(['prefix' => 'speedy','middleware' => 'Rolice\Speedy\Http\Middlewar
 
     Route::get('offices/autocomplete', [ 'as' => 'speedy.offices.autocomplete', 'uses' => 'Rolice\Speedy\Http\Controllers\OfficeController@autocomplete']);
 //    Route::get('offices/dropdown', [ 'as' => 'speedy.offices.dropdown', 'uses' => 'Rolice\Speedy\Http\Controllers\OfficeController@dropdown']);
-//    Route::get('offices/{id}', ['as' => 'speedy.offices.show', 'uses' => 'Rolice\Speedy\Http\Controllers\OfficeController@show']);
+    Route::get('offices/{id}', ['as' => 'speedy.offices.show', 'uses' => 'Rolice\Speedy\Http\Controllers\OfficeController@show']);
 //    Route::get('offices', ['as' => 'speedy.offices', 'uses' => 'Rolice\Speedy\Http\Controllers\OfficeController@index']);
 
-//    Route::post('waybill/issue', ['as' => 'speedy.waybill.issue', 'uses' => 'Rolice\Speedy\Http\Controllers\WaybillController@issue']);
+    Route::post('waybill/issue', ['as' => 'speedy.waybill.issue', 'uses' => 'Rolice\Speedy\Http\Controllers\WaybillController@issue']);
     Route::post('waybill/calculate', [ 'as' => 'speedy.waybill.calculate', 'uses' => 'Rolice\Speedy\Http\Controllers\WaybillController@calculate']);
+
+    Route::get('shipment/types', [ 'as' => 'speedy.shipment.types', 'uses' => 'Rolice\Speedy\Http\Controllers\ShipmentController@index']);
 });

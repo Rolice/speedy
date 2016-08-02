@@ -209,5 +209,9 @@ class Site implements ComponentInterface
         return $site_ex->site;
     }
 
+    public static function detect($site) {
+        return (string) (int) $site == $site ? Site::getById((int) $site) : Site::find($site);
+    }
+
 
 }

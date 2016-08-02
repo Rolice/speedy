@@ -21,24 +21,22 @@ class WaybillRequest extends Request {
      */
     public function rules()
     {
-        $db = Config::get('econt.connection');
-
         $rules = [
             'sender.name' => 'required',
             'sender.phone' => 'required',
-            'sender.settlement' => "required|integer|exists:$db.econt_settlements,id",
+            'sender.settlement' => 'required|integer',
             'sender.pickup' => 'required|in:address,office',
-            'sender.street' => "required_if:sender.pickup,address|exists:$db.econt_streets,id",
+            'sender.street' => 'required_if:sender.pickup,address',
             'sender.street_num' => 'required_if:sender.pickup,address',
             'sender.street_vh' => 'required_if:sender.pickup,address',
-            'sender.office' => "required_if:sender.pickup,office|exists:$db.econt_offices,id",
+            'sender.office' => 'required_if:sender.pickup,office',
 
             'receiver.name' => 'required',
             'receiver.phone' => 'required',
-            'receiver.settlement' => "required|integer|exists:$db.econt_settlements,id",
+            'receiver.settlement' => 'required|integer',
             'receiver.pickup' => 'required|in:address,office',
-            'receiver.street' => "required_if:receiver.pickup,address|exists:$db.econt_streets,id",
-            'receiver.office' => "required_if:receiver.pickup,office|exists:$db.econt_offices,id",
+            'receiver.street' => 'required_if:receiver.pickup,address',
+            'receiver.office' => 'required_if:receiver.pickup,office',
 
             'shipment.num' => 'required',
             'shipment.type' => 'required',

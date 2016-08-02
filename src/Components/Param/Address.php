@@ -2,6 +2,7 @@
 namespace Rolice\Speedy\Components\Param;
 
 use Rolice\Speedy\Components\ComponentInterface;
+use Rolice\Speedy\Components\Result\Site;
 use Rolice\Speedy\Exceptions\SpeedyException;
 use Rolice\Speedy\Traits\Serializable;
 
@@ -148,6 +149,33 @@ class Address implements ComponentInterface
      */
     public $stateId;
 
+
+    public static function createFromRequest(array $data)
+    {
+        $result = new static;
+
+        if (isset($data['settlement']) && $site = Site::detect($data['settlement'])) {
+            $result->siteId = $site->id;
+            $result->siteName = $site->name;
+        }
+
+        $result->postCode = isset($data['postalCode']) ? $data['postalCode'] : null;
+        $result->streetId = isset($data['street']) ? (int)$data['street'] : null;
+        $result->streetNo = isset($data['street_num']) ? $data['street_num'] : null;
+        $result->entranceNo = isset($data['street_vh']) ? $data['street_vh'] : null;
+        $result->floorNo = isset($data['street_et']) ? $data['street_et'] : null;
+        $result->apartmentNo = isset($data['street_ap']) ? $data['street_ap'] : null;
+
+        if (!$result->siteId) {
+            $result->siteId = null;
+        }
+
+        if (!$result->streetId) {
+            $result->streetId = null;
+        }
+
+        return $result;
+    }
 
     public static function createFromSoapResponse($response)
     {

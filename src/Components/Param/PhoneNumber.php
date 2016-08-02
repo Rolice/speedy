@@ -1,6 +1,7 @@
 <?php
 namespace Rolice\Speedy\Components\Param;
 
+use Illuminate\Support\Collection;
 use Rolice\Speedy\Components\ComponentInterface;
 use Rolice\Speedy\Traits\Serializable;
 
@@ -25,4 +26,30 @@ class PhoneNumber implements ComponentInterface
      */
     public $internal;
 
+    public function __construct($number, $internal = null)
+    {
+        $this->number = $number;
+        $this->internal = $internal;
+    }
+
+    public static function createFromRequest(array $data)
+    {
+        $result = [];
+
+        if (isset($data['phone'])) {
+            $result[] = new static($data['phone']);
+        }
+
+        if (isset($data['phones']) && is_array($data['phones'])) {
+            foreach ($data['phones'] as $phone) {
+                if (!is_scalar($phone)) {
+                    continue;
+                }
+
+                $result[] = new static($phone);
+            }
+        }
+
+        return new Collection($result);
+    }
 }

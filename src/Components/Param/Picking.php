@@ -17,6 +17,8 @@ class Picking implements ComponentInterface
 
     const RequestMapping = [
         'weightDeclared' => 'shipment.weight',
+        'contents' => 'shipment.description',
+        'packing' => 'shipment.description',
     ];
 
     const TypeMapping = [
@@ -433,6 +435,7 @@ class Picking implements ComponentInterface
             $result->$expected = $method($result->$expected);
         }
 
+        $result->mapSides();
         $result->mapNullable();
 
         if (!$result->serviceTypeId) {
@@ -453,6 +456,12 @@ class Picking implements ComponentInterface
                 $this->$expected = null;
             }
         }
+    }
+
+    protected function mapSides()
+    {
+        $this->sender = ClientData::createFromRequest($this->sender);
+        $this->receiver = ClientData::createFromRequest($this->receiver);
     }
 
 }
