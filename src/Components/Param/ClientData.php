@@ -52,14 +52,14 @@ class ClientData implements ComponentInterface
      */
     public $email;
 
-    public static function createFromRequest(array $data)
+    public static function createFromRequest(array $data, $id = null)
     {
         $result = new static;
 
-        $result->clientId = isset($data['clientId']) ? (int)$data['clientId'] : 0;
-        $result->partnerName = isset($data['name']) ? $data['name'] : null;
+        $result->clientId = $id ? (int)$id : null;
+        $result->partnerName = !$id && isset($data['name']) ? $data['name'] : null;
         $result->objectName = isset($data['object']) ? (int)$data['object'] : null;
-        $result->address = Address::createFromRequest($data);
+        $result->address = !$id ? Address::createFromRequest($data) : null;
         $result->contactName = isset($data['contact']) ? $data['contact'] : null;
         $result->phones = PhoneNumber::createFromRequest($data);
         $result->email = isset($data['email']) ? $data['email'] : null;

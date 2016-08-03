@@ -16,7 +16,9 @@ class Calculation implements ComponentInterface
 
     const RequestMapping = [
         'senderSiteId' => 'sender.settlement',
+        'willBringToOfficeId' => 'sender.office',
         'receiverSiteId' => 'receiver.settlement',
+        'officeToBeCalledId' => 'receiver.office',
         'weightDeclared' => 'shipment.weight',
     ];
 
@@ -331,6 +333,16 @@ class Calculation implements ComponentInterface
 
         if (!$result->serviceTypeId) {
             $result->serviceTypeId = CourierService::DefaultServiceId;
+        }
+
+        if ($result->willBringToOfficeId) {
+            $result->senderCountryId = null;
+            $result->senderSiteId = null;
+        }
+
+        if ($result->officeToBeCalledId) {
+            $result->receiverCountryId = null;
+            $result->receiverSiteId = null;
         }
 
         if (!$result->parcelsCount) {

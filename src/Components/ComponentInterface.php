@@ -9,7 +9,8 @@ use SimpleXMLElement;
  * @package Rolice\Speedy\Components
  * @version 1.0
  */
-interface ComponentInterface {
+interface ComponentInterface
+{
 
     /**
      * Returns serialization tag name, defaults to current class name if not overridden

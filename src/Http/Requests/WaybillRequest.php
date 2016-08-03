@@ -43,6 +43,8 @@ class WaybillRequest extends Request {
             'shipment.description' => 'required',
             'shipment.count' => 'required|integer|min:1',
             'shipment.weight' => 'required|numeric|min:0.001',
+
+            'payment.side' => 'required|in:sender,receiver',
         ];
 
         if(Input::get('courier.date')) {

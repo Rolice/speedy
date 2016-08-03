@@ -1,6 +1,7 @@
 <?php
 namespace Rolice\Speedy\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Rolice\Speedy\Components\Client;
 use Rolice\Speedy\Components\Param\Language;
@@ -19,7 +20,9 @@ class ServicesController extends Controller
         $speedy = app('speedy');
         $speedy->user(Client::createFromArray($data));
 
-        $services = $speedy->listServices(Language::create());
+        $date = isset($data['date']) ? Carbon::createFromFormat('Y-m-d', $data['date']) : null;
+
+        $services = $speedy->listServices(Language::create(), $date);
 
         if (!isset($services->return) || !$services->return) {
             throw new SpeedyException('Invalid Speedy services response detected.');

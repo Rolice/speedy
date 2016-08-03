@@ -1,6 +1,7 @@
 <?php
 namespace Rolice\Speedy\Traits;
 
+use Illuminate\Support\Collection;
 use ReflectionClass;
 use Rolice\Speedy\Components\ComponentInterface;
 use Rolice\Speedy\Exceptions\SpeedyException;
@@ -56,7 +57,7 @@ trait Serializable
             throw new SpeedyException('Invalid entity for serialization. An implementation of ComponentInterface or array required.');
         }
 
-        if (is_object($data) && !($data instanceof ComponentInterface)) {
+        if (is_object($data) && !$data instanceof ComponentInterface) {
             throw new SpeedyException('An object given is not an implementation of class ComponentInterface.');
         }
 
@@ -76,7 +77,7 @@ trait Serializable
             $value = $reflected ? $value->getValue($data) : $value;
 
             if (null !== $value && !is_scalar($value)) {
-                if (is_object($value) && !($value instanceof ComponentInterface)) {
+                if (is_object($value) && !$value instanceof ComponentInterface) {
                     continue;
                 }
 
@@ -95,7 +96,7 @@ trait Serializable
             throw new SpeedyException('Invalid entity for serialization. An implementation of ComponentInterface or array required.');
         }
 
-        if (is_object($data) && !($data instanceof ComponentInterface)) {
+        if (is_object($data) && !$data instanceof ComponentInterface) {
             throw new SpeedyException('An object given is not an implementation of class ComponentInterface.');
         }
 
@@ -115,7 +116,20 @@ trait Serializable
             $value = $reflected ? $value->getValue($data) : $value;
 
             if (null !== $value && !is_scalar($value)) {
-                if (is_object($value) && !($value instanceof ComponentInterface)) {
+                if ($value instanceof Collection) {
+                    $collection = [];
+
+                    foreach($value as $item) {
+                        if($item instanceof ComponentInterface) {
+                            $collection[] = $item->toArray();
+                        }
+                    }
+
+                    $array[$key] = $collection;
+                    continue;
+                }
+
+                if (is_object($value) && !$value instanceof ComponentInterface) {
                     continue;
                 }
 

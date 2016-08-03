@@ -8,6 +8,7 @@ use Rolice\Speedy\Components\ComponentInterface;
 use Rolice\Speedy\Components\FixedDiscountCardId;
 use Rolice\Speedy\Components\Result\CourierService;
 use Rolice\Speedy\Components\Size;
+use Rolice\Speedy\Exceptions\SpeedyException;
 use Rolice\Speedy\Traits\Serializable;
 
 class Picking implements ComponentInterface
@@ -16,9 +17,11 @@ class Picking implements ComponentInterface
     use Serializable;
 
     const RequestMapping = [
+        'serviceTypeId' => 'service',
         'weightDeclared' => 'shipment.weight',
         'contents' => 'shipment.description',
         'packing' => 'shipment.description',
+        'payerType' => 'payment.side',
     ];
 
     const TypeMapping = [
@@ -396,9 +399,10 @@ class Picking implements ComponentInterface
 
     /**
      * Packings details.
+     * @todo Review this property as it seems it is required not to be passed when generating BOLs.
      * @var Collection<Packing>
      */
-    public $packings;
+    // public $packings;
 
     /**
      * Specifies details for return voucher.
@@ -428,6 +432,22 @@ class Picking implements ComponentInterface
 
         foreach (static::RequestMapping as $expected => $mapping) {
             $result->$expected = Arr::has($data, $mapping) ? Arr::get($data, $mapping) : null;
+        }
+
+        switch ($result->payerType) {
+
+            case 'sender':
+                $result->payerType = 0;
+                break;
+            case 'receiver':
+                $result->payerType = 1;
+                break;
+            case 'third-party':
+                $result->payerType = 2;
+                break;
+
+            default:
+                throw new SpeedyException('Invalid payer type detected.');
         }
 
         foreach (static::TypeMapping as $expected => $type) {
@@ -460,7 +480,7 @@ class Picking implements ComponentInterface
 
     protected function mapSides()
     {
-        $this->sender = ClientData::createFromRequest($this->sender);
+        $this->sender = ClientData::createFromRequest($this->sender, request()->get('id'));
         $this->receiver = ClientData::createFromRequest($this->receiver);
     }
 
