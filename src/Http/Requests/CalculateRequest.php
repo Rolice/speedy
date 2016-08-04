@@ -52,7 +52,7 @@ class CalculateRequest extends Request
 
         foreach($fields as $field)
         {
-            $result[$field] = Lang::get("econt::econt.attributes.$field");
+            $result[$field] = Lang::get("econt::speedy.attributes.$field");
         }
 
         return $result;

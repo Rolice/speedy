@@ -7,7 +7,7 @@ Route::group(['prefix' => 'speedy','middleware' => 'Rolice\Speedy\Http\Middlewar
     Route::get('session', ['as' => 'speedy.session', 'uses' => 'Rolice\Speedy\Http\Controllers\SpeedyController@session']);
 
     Route::get('services', ['as' => 'speedy.services', 'uses' => 'Rolice\Speedy\Http\Controllers\ServicesController@index']);
-    Route::get('services/autocomplete', ['as' => 'speedy.services.autocomplete', 'uses' => 'Rolice\Speedy\Http\Controllers\ServicesController@autocomplete']);
+    Route::get('services/autocomplete/{sender}/{receiver}', ['as' => 'speedy.services.autocomplete', 'uses' => 'Rolice\Speedy\Http\Controllers\ServicesController@autocomplete']);
 
 //    Route::get('settlements', ['as' => 'speedy.settlements', 'uses' => 'Rolice\Speedy\Http\Controllers\SettlementController@index']);
     Route::get('settlements/autocomplete', [ 'as' => 'speedy.settlements.autocomplete', 'uses' => 'Rolice\Speedy\Http\Controllers\SettlementController@autocomplete']);

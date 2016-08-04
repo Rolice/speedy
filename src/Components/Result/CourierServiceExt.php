@@ -1,22 +1,19 @@
 <?php
 namespace Rolice\Speedy\Components\Result;
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Rolice\Speedy\Components\ComplementaryServiceAllowance;
 use Rolice\Speedy\Components\ComponentInterface;
 use Rolice\Speedy\Exceptions\SpeedyException;
 use Rolice\Speedy\Traits\Serializable;
+use Rolice\Speedy\Traits\Timer;
 
-class CourierService implements ComponentInterface
+class CourierServiceExt implements ComponentInterface
 {
 
     use Serializable;
-
-    /**
-     * The default service ID.
-     * @todo Experimental.
-     */
-    const DefaultServiceId = 3;
+    use Timer;
 
     /**
      * Courier service type ID
@@ -67,6 +64,12 @@ class CourierService implements ComponentInterface
     public $allowanceToBeCalled;
 
     /**
+     * The deadline for shipment delivery
+     * @var Carbon|null
+     */
+    public $deliveryDeadline = null;
+
+    /**
      * Cargo type (1 - CARGO_TYPE_PARCEL, 2 - CARGO_TYPE_PALLET)
      * @var int
      */
@@ -91,10 +94,17 @@ class CourierService implements ComponentInterface
             $instance->allowanceBackDocumentsRequest = isset($service->allowanceBackDocumentsRequest) ? $service->allowanceBackDocumentsRequest : null;
             $instance->allowanceBackReceiptRequest = isset($service->allowanceBackReceiptRequest) ? $service->allowanceBackReceiptRequest : null;
             $instance->allowanceToBeCalled = isset($service->allowanceToBeCalled) ? $service->allowanceToBeCalled : null;
+            $instance->deliveryDeadline = isset($service->deliveryDeadline) ? $service->deliveryDeadline : null;
             $instance->cargoType = isset($service->cargoType) ? (int)$service->cargoType : null;
 
             if (!$instance->typeId || !$instance->name || !$instance->cargoType) {
                 throw new SpeedyException('Invalid Speedy service detected.');
+            }
+
+            $instance->deliveryDeadline = static::ParseDate($instance->deliveryDeadline);
+
+            if ($instance->deliveryDeadline && !$instance->deliveryDeadline instanceof Carbon) {
+                throw new SpeedyException('Invalid Speedy service date detected.');
             }
 
 

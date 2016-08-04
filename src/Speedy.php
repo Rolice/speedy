@@ -254,6 +254,23 @@ class Speedy
         return $response;
     }
 
+    public function listServicesForSites($sender_site_id, $receiver_site_id, Language $language, Carbon $date = null)
+    {
+        if (!$date) {
+            $date = new Carbon();
+        }
+
+        $response = $this->call('listServicesForSites', [
+            'sessionId' => $this->user->sessionId(),
+            'date' => $date->format('Y-m-d'),
+            'language' => $language->get(),
+            'senderSiteId' => (int) $sender_site_id,
+            'receiverSiteId' => (int) $receiver_site_id,
+        ]);
+
+        return $response;
+    }
+
     public function calculate(Calculation $calculation)
     {
         $response = $this->call('calculate', [

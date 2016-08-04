@@ -8,6 +8,11 @@ use Exception;
 trait Timer
 {
 
+    /**
+     * Creates new Carbon instance from date-only string.
+     * @param string $date The date to be used in the creation of the new instance.
+     * @return Carbon|null
+     */
     public static function ParseDate($date)
     {
         $result = null;
@@ -21,6 +26,7 @@ trait Timer
     }
 
     /**
+     * Creates new DateInterval instance in order to be used as time-only variable.
      * @param string $time Speedy formatted time 830 -> 08:30, 1745 -> 17:45.
      * @return DateInterval|null
      */

@@ -45,6 +45,9 @@ class WaybillRequest extends Request {
             'shipment.weight' => 'required|numeric|min:0.001',
 
             'payment.side' => 'required|in:sender,receiver',
+
+            'services.date' => 'required|date_format:Y-m-d|after:today',
+            'services.service' => 'required|int',
         ];
 
         if(Input::get('courier.date')) {
@@ -90,7 +93,7 @@ class WaybillRequest extends Request {
 
         foreach($fields as $field)
         {
-            $result[$field] = Lang::get("econt::econt.attributes.$field");
+            $result[$field] = Lang::get("econt::speedy.attributes.$field");
         }
 
         return $result;

@@ -17,11 +17,13 @@ class Picking implements ComponentInterface
     use Serializable;
 
     const RequestMapping = [
-        'serviceTypeId' => 'service',
+        'takingDate' => 'services.date',
+        'serviceTypeId' => 'services.service',
         'weightDeclared' => 'shipment.weight',
         'contents' => 'shipment.description',
         'packing' => 'shipment.description',
         'payerType' => 'payment.side',
+        'amountCodBase' => 'services.cd',
     ];
 
     const TypeMapping = [
@@ -81,6 +83,11 @@ class Picking implements ComponentInterface
         'clientSystemId',
         'specialDeliveryId',
         'deliveryToFloorNo',
+    ];
+
+    const Optional = [
+//        'parcels',
+//        'retServicesRequest',
     ];
 
     /**
@@ -343,7 +350,7 @@ class Picking implements ComponentInterface
      *
      * @var Collection<ParcelInfo>
      */
-    public $parcels;
+//    public $parcels;
 
     /**
      * When parcelsCount > 1 and non-pallet service is used and no explicit data has been set in the parcels property
@@ -382,7 +389,7 @@ class Picking implements ComponentInterface
      * Specifies the list of return services request.
      * @var Collection<ReturnServiceRequest>
      */
-    public $retServicesRequest;
+//    public $retServicesRequest;
 
     /**
      * Specifies the return shipment request.
@@ -456,6 +463,7 @@ class Picking implements ComponentInterface
         }
 
         $result->mapSides();
+        $result->mapBeforePaymentOptions($data);
         $result->mapNullable();
 
         if (!$result->serviceTypeId) {
@@ -464,6 +472,16 @@ class Picking implements ComponentInterface
 
         if (!$result->parcelsCount) {
             $result->parcelsCount = 1;
+        }
+
+        if (0 < $result->amountCodBase) {
+            $result->includeShippingPriceInCod = true;
+        }
+
+        foreach (static::Optional as $optional) {
+            if (!$result->$optional) {
+                unset($result->$optional);
+            }
         }
 
         return $result;
@@ -482,6 +500,11 @@ class Picking implements ComponentInterface
     {
         $this->sender = ClientData::createFromRequest($this->sender, request()->get('id'));
         $this->receiver = ClientData::createFromRequest($this->receiver);
+    }
+
+    protected function mapBeforePaymentOptions(array $data)
+    {
+        $this->optionsBeforePayment = OptionsBeforePayment::createFromRequest($data);
     }
 
 }
