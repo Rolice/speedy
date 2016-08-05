@@ -478,6 +478,19 @@ class Picking implements ComponentInterface
             $result->includeShippingPriceInCod = true;
         }
 
+        if (Arr::has($data, 'services.oc') && 0 < ($oc = (float)Arr::get($data, 'services.oc'))) {
+            $result->amountInsuranceBase = $oc;
+            $result->payerTypeInsurance = $result->payerType;
+        }
+
+        if (Arr::has($data, 'services.dp.documents')) {
+            $result->backDocumentsRequest = !!Arr::get($data, 'services.dp.documents');
+        }
+
+        if (Arr::has($data, 'services.dp.receipt')) {
+            $result->backReceiptRequest = !!Arr::get($data, 'services.dp.receipt');
+        }
+
         foreach (static::Optional as $optional) {
             if (!$result->$optional) {
                 unset($result->$optional);
