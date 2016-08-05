@@ -23,6 +23,7 @@ Route::group(['prefix' => 'speedy','middleware' => 'Rolice\Speedy\Http\Middlewar
 
     Route::post('waybill/issue', ['as' => 'speedy.waybill.issue', 'uses' => 'Rolice\Speedy\Http\Controllers\WaybillController@issue']);
     Route::post('waybill/calculate', [ 'as' => 'speedy.waybill.calculate', 'uses' => 'Rolice\Speedy\Http\Controllers\WaybillController@calculate']);
+    Route::post('waybill/pdf', [ 'as' => 'speedy.waybill.pdf', 'uses' => 'Rolice\Speedy\Http\Controllers\WaybillController@pdf']);
 
     Route::get('shipment/types', [ 'as' => 'speedy.shipment.types', 'uses' => 'Rolice\Speedy\Http\Controllers\ShipmentController@index']);
 });

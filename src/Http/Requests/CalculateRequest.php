@@ -1,9 +1,8 @@
 <?php
 namespace Rolice\Speedy\Http\Requests;
 
-use Lang;
-use Config;
 use App\Http\Requests\Request;
+use Lang;
 
 class CalculateRequest extends Request
 {
@@ -50,9 +49,8 @@ class CalculateRequest extends Request
 
         $result = [];
 
-        foreach($fields as $field)
-        {
-            $result[$field] = Lang::get("econt::speedy.attributes.$field");
+        foreach ($fields as $field) {
+            $result[$field] = Lang::get("speedy::speedy.attributes.$field");
         }
 
         return $result;

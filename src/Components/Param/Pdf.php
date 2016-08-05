@@ -1,6 +1,7 @@
 <?php
 namespace Rolice\Speedy\Components\Param;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Rolice\Speedy\Components\ComponentInterface;
 use Rolice\Speedy\Traits\Serializable;
@@ -9,6 +10,10 @@ class Pdf implements ComponentInterface
 {
 
     use Serializable;
+
+    const RequestMapping = [];
+
+    const TypeMapping = [];
 
     /**
      * The document type constant representing waybill PDFs.
@@ -29,6 +34,13 @@ class Pdf implements ComponentInterface
      * The document type constant representing return voucher PDFs.
      */
     const ReturnVoucher = 30;
+
+    const DocumentTypes = [
+        self::Waybill,
+        self::Labels,
+        self::LabelsPlus,
+        self::ReturnVoucher,
+    ];
 
     /**
      * Constant representing barcode format CODE128.
@@ -98,5 +110,32 @@ class Pdf implements ComponentInterface
      * @var string
      */
     public $additionalBarcodesFormat;
+
+
+    public static function createFromRequest(array $data)
+    {
+        $result = new static;
+
+        foreach ($result as $expected => $default) {
+            $result->$expected = Arr::has($data, $expected) ? Arr::get($data, $expected) : null;
+        }
+
+        foreach (static::RequestMapping as $expected => $mapping) {
+            $result->$expected = Arr::has($data, $mapping) ? Arr::get($data, $mapping) : null;
+        }
+
+        foreach (static::TypeMapping as $expected => $type) {
+            $method = $type . 'val';
+            $result->$expected = $method($result->$expected);
+        }
+
+        if (!in_array($result->type, static::DocumentTypes)) {
+            $result->type = static::Waybill;
+        }
+
+        $result->ids = new Collection([Arr::get($data, 'waybill')]);
+
+        return $result;
+    }
 
 }

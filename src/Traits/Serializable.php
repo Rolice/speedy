@@ -119,9 +119,13 @@ trait Serializable
                 if ($value instanceof Collection) {
                     $collection = [];
 
-                    foreach($value as $item) {
-                        if($item instanceof ComponentInterface) {
+                    foreach ($value as $item) {
+                        if ($item instanceof ComponentInterface) {
                             $collection[] = $item->toArray();
+                        }
+
+                        if (is_scalar($item)) {
+                            $collection[] = $item;
                         }
                     }
 

@@ -1,12 +1,12 @@
 <?php
 namespace Rolice\Speedy\Http\Requests;
 
-use Lang;
-use Input;
-use Config;
 use App\Http\Requests\Request;
+use Input;
+use Lang;
 
-class WaybillRequest extends Request {
+class WaybillRequest extends Request
+{
 
     public function authorize()
     {
@@ -50,7 +50,7 @@ class WaybillRequest extends Request {
             'services.service' => 'required|int',
         ];
 
-        if(Input::get('courier.date')) {
+        if (Input::get('courier.date')) {
             $rules['courier.date'] = 'date_format:Y-m-d';
             $rules['courier.time_from'] = 'required_with:courier.date|date_format:H:i';
             $rules['courier.time_to'] = 'required_with:courier.date|date_format:H:i';
@@ -91,9 +91,8 @@ class WaybillRequest extends Request {
 
         $result = [];
 
-        foreach($fields as $field)
-        {
-            $result[$field] = Lang::get("econt::speedy.attributes.$field");
+        foreach ($fields as $field) {
+            $result[$field] = Lang::get("speedy::speedy.attributes.$field");
         }
 
         return $result;
