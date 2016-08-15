@@ -17,11 +17,11 @@ class Language
             return;
         }
 
-        if (!in_array($language, self::Available)) {
+        if (!in_array(strtoupper($language), self::Available)) {
             return;
         }
 
-        $this->lang = $language;
+        $this->lang = strtoupper($language);
     }
 
     public function get()
