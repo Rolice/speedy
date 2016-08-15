@@ -68,7 +68,8 @@ class WorkingTime
         $to = static::ParseTime($to);
 
         if (!$from || !$to) {
-            throw new SpeedyException('Invalid work time detected.');
+            return null;
+//            throw new SpeedyException('Invalid work time detected.');
         }
 
         $half = null;
