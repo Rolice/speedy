@@ -15,6 +15,9 @@ class CourierServiceExt implements ComponentInterface
     use Serializable;
     use Timer;
 
+    const CARGO_TYPE_PARCEL = 1;
+    const CARGO_TYPE_PALLET = 2;
+
     /**
      * Courier service type ID
      * @var int

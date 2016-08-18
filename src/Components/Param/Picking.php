@@ -9,6 +9,7 @@ use Rolice\Speedy\Components\FixedDiscountCardId;
 use Rolice\Speedy\Components\Result\CourierService;
 use Rolice\Speedy\Components\Size;
 use Rolice\Speedy\Exceptions\SpeedyException;
+use Rolice\Speedy\Speedy;
 use Rolice\Speedy\Traits\Serializable;
 
 class Picking implements ComponentInterface
@@ -350,7 +351,7 @@ class Picking implements ComponentInterface
      *
      * @var Collection<ParcelInfo>
      */
-//    public $parcels;
+    public $parcels;
 
     /**
      * When parcelsCount > 1 and non-pallet service is used and no explicit data has been set in the parcels property
@@ -497,6 +498,8 @@ class Picking implements ComponentInterface
             }
         }
 
+        $result->mapParcels();
+
         return $result;
     }
 
@@ -520,4 +523,28 @@ class Picking implements ComponentInterface
         $this->optionsBeforePayment = OptionsBeforePayment::createFromRequest($data);
     }
 
+    protected function mapParcels()
+    {
+        /**
+         * @var Speedy $speedy
+         * @var CourierService|null $service
+         */
+
+        $speedy = app('speedy');
+        $service = $speedy->findService($this->serviceTypeId);
+
+        if ($service && CourierService::CARGO_TYPE_PARCEL == $service->cargoType) {
+            $this->parcels = new Collection([ParcelInfo::createDefault($this->weightDeclared)]);
+        }
+
+        /**
+         * @todo Refactor Required
+         * $result->parcels is either defined on-the-fly or unset. Speedy service cannot operate with it if it is empty.
+         * We receive NullPointerException (bug in their system), if do pass it.
+         */
+        if (!$this->parcels) {
+            unset($this->parcels);
+        }
+
+    }
 }

@@ -3,14 +3,13 @@ namespace Rolice\Speedy;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
-use Rolice\Speedy\Components\Param\Calculation;
 use Rolice\Speedy\Components\Client;
 use Rolice\Speedy\Components\ComponentInterface;
+use Rolice\Speedy\Components\Param\Calculation;
 use Rolice\Speedy\Components\PAram\FilterSite;
 use Rolice\Speedy\Components\Param\Language;
 use Rolice\Speedy\Components\Param\Pdf;
 use Rolice\Speedy\Components\Param\Picking;
-use Rolice\Speedy\Components\Result\BOL;
 use Rolice\Speedy\Exceptions\InvalidUsernameOrPasswordException;
 use Rolice\Speedy\Exceptions\NoUserPermissionsException;
 use Rolice\Speedy\Exceptions\SpeedyException;
@@ -264,11 +263,28 @@ class Speedy
             'sessionId' => $this->user->sessionId(),
             'date' => $date->format('Y-m-d'),
             'language' => $language->get(),
-            'senderSiteId' => (int) $sender_site_id,
-            'receiverSiteId' => (int) $receiver_site_id,
+            'senderSiteId' => (int)$sender_site_id,
+            'receiverSiteId' => (int)$receiver_site_id,
         ]);
 
         return $response;
+    }
+
+    public function findService($id, Carbon $date = null)
+    {
+        $services = $this->listServices(Language::create(), $date);
+
+        if (!$services || !isset($services->return) || !is_array($services->return)) {
+            return null;
+        }
+
+        foreach ($services->return as $service) {
+            if ($id == $service->typeId) {
+                return $service;
+            }
+        }
+
+        return null;
     }
 
     public function calculate(Calculation $calculation)
@@ -310,5 +326,5 @@ class Speedy
 
         return $response;
     }
-    
+
 }

@@ -10,6 +10,8 @@ class ParcelInfo implements ComponentInterface
 
     use Serializable;
 
+    const AutomaticParcelId = -1;
+
     /**
      * Parcel's sequential number (1, 2, 3, ...). First parcel (seqNo = 1) could be omitted for non-pallet shipments.
      * In this case it will be auto-generated.
@@ -49,5 +51,18 @@ class ParcelInfo implements ComponentInterface
      * @var string
      */
     public $foreignParcelNumber;
+
+    public static function createDefault($weight)
+    {
+        $result = new static();
+
+        $result->seqNo = 1;
+        $result->parcelId = static::AutomaticParcelId;
+        $result->size = new Size(1, 1, 1);
+        $result->weight = (float)$weight;
+        $result->foreignParcelNumber = '';
+
+        return $result;
+    }
 
 }

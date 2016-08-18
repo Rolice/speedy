@@ -12,6 +12,9 @@ class CourierService implements ComponentInterface
 
     use Serializable;
 
+    const CARGO_TYPE_PARCEL = 1;
+    const CARGO_TYPE_PALLET = 2;
+
     /**
      * The default service ID.
      * @todo Experimental.
