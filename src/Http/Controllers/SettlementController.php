@@ -2,7 +2,6 @@
 namespace Rolice\Speedy\Http\Controllers;
 
 use App;
-use App\Http\Controllers\Controller;
 use Input;
 use Rolice\Speedy\Components\Client;
 use Rolice\Speedy\Components\Param\FilterSite;
