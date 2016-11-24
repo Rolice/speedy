@@ -159,7 +159,7 @@ class Speedy
             'refreshSession' => !!$refresh
         ]);
 
-        return isset($response->result) ? !!$response->result : false;
+        return isset($response->return) ? !!$response->return : false;
     }
 
     public function user($data)
