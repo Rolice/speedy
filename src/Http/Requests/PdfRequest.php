@@ -21,7 +21,7 @@ class PdfRequest extends Request
     public function rules()
     {
         return [
-            'waybill' => 'required|int',
+            'waybill' => 'required',
         ];
     }
 

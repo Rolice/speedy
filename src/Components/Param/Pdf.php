@@ -133,7 +133,8 @@ class Pdf implements ComponentInterface
             $result->type = static::Waybill;
         }
 
-        $result->ids = new Collection([Arr::get($data, 'waybill')]);
+        $result->ids = Collection::make([Arr::get($data, 'waybill')])
+            ->map(function($id) { return (float)$id; });
 
         return $result;
     }

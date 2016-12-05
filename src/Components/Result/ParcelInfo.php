@@ -26,7 +26,7 @@ class ParcelInfo implements ComponentInterface
     public function __construct($seqNo, $parcelId)
     {
         $this->seqNo = (int)$seqNo;
-        $this->parcelId = (int)$parcelId;
+        $this->parcelId = (float)$parcelId;
     }
 
     public static function createFromSoapResponse($response)
@@ -39,7 +39,7 @@ class ParcelInfo implements ComponentInterface
 
         foreach ($response as $parcelInfo) {
             $seqNo = isset($parcelInfo->seqNo) ? (int)$parcelInfo->seqNo : 0;
-            $parcelId = isset($parcelInfo->parcelId) ? (int)$parcelInfo->parcelId : 0;
+            $parcelId = isset($parcelInfo->parcelId) ? (float)$parcelInfo->parcelId : 0;
 
             if (!$seqNo || !$parcelId) {
                 throw new SpeedyException('Invalid parcel info detected.');
