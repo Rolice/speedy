@@ -32,6 +32,10 @@ class WaybillController extends Controller
         $speedy->user($client);
 
         $picking = Picking::createFromRequest($data);
+        if(isset($data['receiver']['office']) && $data['receiver']['office']) {
+            $picking->officeToBeCalledId = $data['receiver']['office'];
+            unset($picking->receiver->address);
+        }
         $waybill = $speedy->createBillOfLading($picking);
 
         if (!isset($waybill->return) || !$waybill->return) {

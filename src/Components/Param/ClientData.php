@@ -56,7 +56,7 @@ class ClientData implements ComponentInterface
     {
         $result = new static;
 
-        $result->clientId = $id ? (int)$id : null;
+        $result->clientId = $id ? (float)$id : null;
         $result->partnerName = !$id && isset($data['name']) ? $data['name'] : null;
         $result->objectName = isset($data['object']) ? (int)$data['object'] : null;
         $result->address = !$id ? Address::createFromRequest($data) : null;
